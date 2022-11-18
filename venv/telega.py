@@ -124,23 +124,8 @@ def command(message):
         except:
             bot.send_message(message.from_user.id, "Наш хост недоступен :(")
             return
-        channel = client.invoke_shell()
-        channel.send("enable\n")
-        channel.send("cisco\n")
-        time.sleep(1)
-        channel.send("terminal length 0\n")
-        time.sleep(1)
-        channel.recv(60000)
-        channel.send(str(message.text)+"\n")
-        channel.settimeout(5)
-        output = ""
-        while True:
-            try:
-                part = channel.recv(60000).decode("cp866")
-                output += part
-                time.sleep(0.5)
-            except socket.timeout:
-                break
+        stdin, stdout, stderr = client.exec_command(message.text)
+        output = stdout.read().decode()
         bot.send_message(message.from_user.id, output)
         client.close()
     else:
